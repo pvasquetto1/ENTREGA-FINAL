@@ -1,6 +1,6 @@
 # Radar Inteligente de Licitaciones Biomédicas
 
-Entrega final — Automatización con IA (n8n + Airtable + Gemini + HITL)
+Entrega final — Automatización con IA 
 
 Alumna: Vasquetto Paula
 
@@ -11,3 +11,4 @@ Alumna: Vasquetto Paula
 - [Malla de Seguridad, Privacidad y Resiliencia]
 - [Dashboard de control (Airtable)](https://airtable.com/appS7QAfwS4H9xLt0/shrD3x3TuWBFb0AfC)
 - [Test de estrés]
+- [Video demo](https://drive.google.com/file/d/1Ofy55J5bRki-MDJr4WK-i7bWD2KVXGN4/view?usp=sharing)
