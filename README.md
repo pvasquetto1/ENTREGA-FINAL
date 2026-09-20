@@ -12,3 +12,8 @@ Alumna: Vasquetto Paula
 - [Dashboard de control (Airtable)](https://airtable.com/appS7QAfwS4H9xLt0/shrD3x3TuWBFb0AfC)
 - [Test de estrés]
 - [Video demo](https://drive.google.com/file/d/1Ofy55J5bRki-MDJr4WK-i7bWD2KVXGN4/view?usp=sharing)
+- [Archivo JSON del flujo]
+  
+## Base de datos
+- [Tabla Licitaciones](https://airtable.com/appS7QAfwS4H9xLt0/shrP1Xgue1dzzTUAw)
+- [Tabla Config_Empresa](https://airtable.com/appS7QAfwS4H9xLt0/shraWhwaPRNJCdOV9)
