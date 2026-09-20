@@ -1,0 +1,4840 @@
+{
+  "name": "Radar Licitaciones Biomédicas",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        448
+      ],
+      "id": "0ee622f6-c6d5-40f2-a599-aa22fe0b4052",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yLmBaainD1Hf51kB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "feedUrl": "https://www.google.com/alerts/feeds/04189142034135423296/3928093985750929849"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -224
+      ],
+      "id": "88ee5b79-d860-41fb-96c6-f6056d67c829",
+      "name": "Disparador RSS - Alertas Google"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7aa6c0ef-c016-4627-bb6e-48196b0c6f5c",
+              "leftValue": "={{ $json.title.toLowerCase() + ' ' + ($json.contentSnippet || '').toLowerCase() }}",
+              "rightValue": "licitaci",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -464,
+        -224
+      ],
+      "id": "494bd2ff-7d4d-49cd-826a-bbc9f18fe726",
+      "name": "Filtro - Palabra clave licitación"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "Nombre publicación": "={{ $json.title }}",
+            "Fuente": "Google Alerta",
+            "Estado": "Nueva",
+            "Link original": "={{ $json.link }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Última modificación",
+              "displayName": "Última modificación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        -224
+      ],
+      "id": "15b6f4ad-8293-48bd-84dd-e6b8652131bb",
+      "name": "Crear fila - Nueva licitación (RSS)",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "authentication": "airtableOAuth2Api",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE/viws7Gar5yg40I3k3?blocks=hide",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE/viws7Gar5yg40I3k3?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "Fecha de detección",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        240
+      ],
+      "id": "f532298f-b2aa-4a24-8173-bbc8bfa989d0",
+      "name": "Disparador - Nueva licitación detectada",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.fields['Link original'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -240,
+        240
+      ],
+      "id": "8caf603a-2fbb-4263-bdd7-76b3d13e4492",
+      "name": "Descargar aviso (link original)",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "texto_licitacion",
+              "cssSelector": "#detalleAviso"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        240
+      ],
+      "id": "414adddb-1bb4-44d1-b6ef-ca8b059d0ecb",
+      "name": "Extraer texto del aviso"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMBVU1MBsc3WMeo",
+          "mode": "list",
+          "cachedResultName": "Config_Empresa",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblMBVU1MBsc3WMeo"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        240
+      ],
+      "id": "d6c15c5d-d8c6-4bd5-98c1-14daebc346b2",
+      "name": "Buscar datos empresa",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sos un asistente experto en compras públicas de equipamiento médico en Argentina, trabajando para la empresa {{ $json.fields['Nombre empresa'] }}.\n\nRubro y productos de la empresa: {{ $json.fields['Rubro y productos que vende'] }}\nPalabras clave de interés de la empresa: {{ $json.fields['Palabras clave de interés'] }}\n\nAnalizá el siguiente texto de una publicación de licitación pública y extraé la información en formato JSON, sin texto adicional antes ni después. Si un dato no figura en el texto, poné null.\n\nTexto de la publicación:\n\"\"\"\n{{ $('Extraer texto del aviso').item.json.texto_licitacion }}\n\"\"\"\n\nDevolvé EXACTAMENTE este JSON, sin comentarios ni markdown, solo el JSON:\n{\n  \"organismo_comprador\": \"\",\n  \"hospital_institucion\": \"\",\n  \"categoria_equipo\": \"una de: Diagnóstico por imágenes, Respiradores y anestesia, Monitores multiparamétricos, Laboratorio, Bombas de infusión, Mantenimiento y calibración, Insumos hospitalarios, Otro\",\n  \"cantidad\": null,\n  \"presupuesto_estimado\": null,\n  \"provincia\": \"\",\n  \"fecha_limite_presentacion\": \"\",\n  \"requisitos_tecnicos\": \"\",\n  \"certificaciones_exigidas\": \"\",\n  \"nivel_compatibilidad\": \"Alta, Media o Baja, según qué tan relacionado está el objeto de la licitación con el rubro y productos de la empresa\",\n  \"prioridad\": \"Alta, Media o Baja, combinando compatibilidad, urgencia de la fecha límite y magnitud del presupuesto\",\n  \"resumen_ia\": \"una o dos frases resumiendo la oportunidad y por qué conviene o no participar\"\n}",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        432,
+        240
+      ],
+      "id": "3e61f8e6-68dc-4888-a40b-31e83233bb04",
+      "name": "IA - Extraer datos de la licitación",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "try {\n  const parsed = JSON.parse($input.item.json.text);\n  parsed.json_invalido = false;\n  return [{ json: parsed }];\n} catch (e) {\n  return [{ json: { json_invalido: true } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        240
+      ],
+      "id": "f2adac51-3c1d-421b-92e3-c373925c3141",
+      "name": "Parsear JSON de la IA"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "04d1725c-7a01-4b67-84e9-72893613c0f4",
+              "leftValue": "={{ $json.json_invalido }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1024,
+        240
+      ],
+      "id": "e2b1f3dc-40f7-4a6c-9277-2dbeedf2d9d4",
+      "name": "IF - ¿JSON válido?"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "id": "={{ $('Disparador - Nueva licitación detectada').item.json.id }}",
+            "Estado": "Error"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Última modificación",
+              "displayName": "Última modificación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        64
+      ],
+      "id": "9214b289-adb1-478a-89ea-de6f9d31db3b",
+      "name": "Actualizar - Error JSON inválido",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "id": "={{ $('Disparador - Nueva licitación detectada').item.json.id }}",
+            "Organismo comprador": "={{ $json.organismo_comprador }}",
+            "Hospital o Institución": "={{ $json.hospital_institucion }}",
+            "Categoría de equipo": "={{ $json.categoria_equipo }}",
+            "Cantidad": "={{ $json.cantidad }}",
+            "Presupuesto estimado": "={{ $json.presupuesto_estimado }}",
+            "Provincia": "={{ $json.provincia }}",
+            "Requisitos técnicos": "={{ $json.requisitos_tecnicos }}",
+            "Certificaciones o garantías exigidas": "={{ $json.certificaciones_exigidas }}",
+            "Nivel de compatibilidad": "={{ $json.nivel_compatibilidad }}",
+            "Prioridad": "={{ $json.prioridad }}",
+            "Resumen IA": "={{ $json.resumen_ia }}",
+            "Estado": "Procesada por IA"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        256
+      ],
+      "id": "81628963-da79-4aa1-9d1f-82840e6c5ac1",
+      "name": "Actualizar - Datos extraídos (Procesada por IA)",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d225bd68-d53c-4793-be7c-71d684bc634c",
+              "leftValue": "={{ $json.fields['Prioridad'] }}",
+              "rightValue": "Baja",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1376,
+        256
+      ],
+      "id": "f57bffe7-5fb3-4e86-9c28-3776a19e13d3",
+      "name": "IF - ¿Prioridad Alta/Media?"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "id": "={{ $('Disparador - Nueva licitación detectada').item.json.id }}",
+            "Estado": "Descartada automática"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        144
+      ],
+      "id": "9b0548e1-c42d-44d2-bbd4-4d717e2b4ddd",
+      "name": "Actualizar - Descartada automática (Baja)",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BSUCTLBRT",
+          "mode": "list",
+          "cachedResultName": "nuevo-canal"
+        },
+        "text": "=🔔 *Nueva oportunidad detectada — Prioridad {{ $json.fields.Prioridad }}* *Organismo:* {{ $json.fields['Organismo comprador'] }} *Hospital/Institución:* {{ $json.fields['Hospital o Institución'] }} *Categoría:* {{ $json.fields['Categoría de equipo'] }} *Provincia:* {{ $json.fields.Provincia }} *Resumen:* {{ $json.fields['Resumen IA'] }} *Link:* {{ $('Disparador - Nueva licitación detectada').item.json.fields['Link original'] }}  Para aprobar, marcá el checkbox \"Aprobado por humano\" en Airtable.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1584,
+        336
+      ],
+      "id": "d301ca11-2617-4d25-b342-6d0524d36b0c",
+      "name": "Slack - Aviso equipo comercial",
+      "webhookId": "ed70fcc5-a343-440f-ab20-b5b0f102bd9b",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "XCKwgSXgmxySXRGe",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "id": "={{ $('Disparador - Nueva licitación detectada').item.json.id }}",
+            "Estado": "Error"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Última modificación",
+              "displayName": "Última modificación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        432
+      ],
+      "id": "c7805bc1-ff82-4690-8424-ba5c5746069a",
+      "name": "Actualizar - Error link roto",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "id": "={{ $('Disparador - Nueva licitación detectada').item.json.id }}",
+            "Estado": "Error"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Última modificación",
+              "displayName": "Última modificación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        400
+      ],
+      "id": "f3d23670-3afe-4584-8672-2a4066fa275d",
+      "name": "Actualizar - Error IA (falla API)",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableOAuth2Api",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE/viws7Gar5yg40I3k3?blocks=hide",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE/viws7Gar5yg40I3k3?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "Última modificación",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        720
+      ],
+      "id": "e3ba1989-0e22-4961-8031-10155d628e71",
+      "name": "Disparador - Aprobación humana",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7d2f0839-c8e4-492a-9dec-def0be333575",
+              "leftValue": "={{ $json.fields['Aprobado por humano'] }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -464,
+        720
+      ],
+      "id": "7f33af05-c288-4c68-aec0-4e3fed355860",
+      "name": "IF - ¿Aprobado por humano?"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMBVU1MBsc3WMeo",
+          "mode": "list",
+          "cachedResultName": "Config_Empresa",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblMBVU1MBsc3WMeo"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        624
+      ],
+      "id": "692b881e-2d3c-4426-8f42-12ed76617de8",
+      "name": "Buscar datos (aprobación)",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields['Email comercial'] }}",
+        "subject": "=Oportunidad confirmada: {{ $('Disparador - Aprobación humana').item.json.fields['Nombre publicación'] }}",
+        "message": "=Se aprobó el seguimiento de la siguiente licitación:  Organismo: {{ $('Disparador - Aprobación humana').item.json.fields['Organismo comprador'] }} Hospital/Institución: {{ $('Disparador - Aprobación humana').item.json.fields['Hospital o Institución'] }} Categoría: {{ $('Disparador - Aprobación humana').item.json.fields['Categoría de equipo'] }} Provincia: {{ $('Disparador - Aprobación humana').item.json.fields['Provincia'] }} Resumen: {{ $('Disparador - Aprobación humana').item.json.fields['Resumen IA'] }} Link: {{ $('Disparador - Aprobación humana').item.json.fields['Link original'] }}  Equipo comercial de BioTecMed: preparar seguimiento.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        624
+      ],
+      "id": "2f198da4-1d6d-49ce-8709-c723dde684c8",
+      "name": "Gmail - Enviar resumen comercial",
+      "webhookId": "64a5bd40-9f8c-443c-af16-841e2045bef0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9bc5x1lsMch3D6FQ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appS7QAfwS4H9xLt0",
+          "mode": "list",
+          "cachedResultName": "LICITACIONES",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblLDBBUYTjJ9rjYE",
+          "mode": "list",
+          "cachedResultName": "Licitaciones",
+          "cachedResultUrl": "https://airtable.com/appS7QAfwS4H9xLt0/tblLDBBUYTjJ9rjYE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aprobado por humano": false,
+            "id": "={{ $('Disparador - Aprobación humana').item.json.id }}",
+            "Estado": "Aprobada"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre publicación",
+              "displayName": "Nombre publicación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Link original",
+              "displayName": "Link original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente",
+              "displayName": "Fuente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Google Alerta",
+                  "value": "Google Alerta"
+                },
+                {
+                  "name": "Manual",
+                  "value": "Manual"
+                },
+                {
+                  "name": "COMPR.AR",
+                  "value": "COMPR.AR"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Organismo comprador",
+              "displayName": "Organismo comprador",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Hospital o Institución",
+              "displayName": "Hospital o Institución",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Categoría de equipo",
+              "displayName": "Categoría de equipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Diagnóstico por imágenes",
+                  "value": "Diagnóstico por imágenes"
+                },
+                {
+                  "name": "Respiradores y anestesia",
+                  "value": "Respiradores y anestesia"
+                },
+                {
+                  "name": "Monitores multiparamétricos",
+                  "value": "Monitores multiparamétricos"
+                },
+                {
+                  "name": "Laboratorio",
+                  "value": "Laboratorio"
+                },
+                {
+                  "name": "Bombas de infusión",
+                  "value": "Bombas de infusión"
+                },
+                {
+                  "name": "Mantenimiento y calibración",
+                  "value": "Mantenimiento y calibración"
+                },
+                {
+                  "name": "Insumos hospitalarios",
+                  "value": "Insumos hospitalarios"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                },
+                {
+                  "name": "Respiradores",
+                  "value": "Respiradores"
+                },
+                {
+                  "name": "Desfibriladores",
+                  "value": "Desfibriladores"
+                },
+                {
+                  "name": "Incubadoras",
+                  "value": "Incubadoras"
+                },
+                {
+                  "name": "Rayos X",
+                  "value": "Rayos X"
+                },
+                {
+                  "name": "Ecógrafos",
+                  "value": "Ecógrafos"
+                },
+                {
+                  "name": "Camas hospitalarias",
+                  "value": "Camas hospitalarias"
+                },
+                {
+                  "name": "Autoclaves",
+                  "value": "Autoclaves"
+                },
+                {
+                  "name": "Ventiladores de transporte",
+                  "value": "Ventiladores de transporte"
+                },
+                {
+                  "name": "Lámparas cialíticas",
+                  "value": "Lámparas cialíticas"
+                },
+                {
+                  "name": "Equipos de anestesia",
+                  "value": "Equipos de anestesia"
+                },
+                {
+                  "name": "Bombas de jeringa",
+                  "value": "Bombas de jeringa"
+                },
+                {
+                  "name": "Aspiradores quirúrgicos",
+                  "value": "Aspiradores quirúrgicos"
+                },
+                {
+                  "name": "Equipos de laboratorio",
+                  "value": "Equipos de laboratorio"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presupuesto estimado",
+              "displayName": "Presupuesto estimado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Provincia",
+              "displayName": "Provincia",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Buenos Aires",
+                  "value": "Buenos Aires"
+                },
+                {
+                  "name": "Ciudad Autónoma de Buenos Aires",
+                  "value": "Ciudad Autónoma de Buenos Aires"
+                },
+                {
+                  "name": "Catamarca",
+                  "value": "Catamarca"
+                },
+                {
+                  "name": "Chaco",
+                  "value": "Chaco"
+                },
+                {
+                  "name": "Chubut",
+                  "value": "Chubut"
+                },
+                {
+                  "name": "Córdoba",
+                  "value": "Córdoba"
+                },
+                {
+                  "name": "Corrientes",
+                  "value": "Corrientes"
+                },
+                {
+                  "name": "Entre Ríos",
+                  "value": "Entre Ríos"
+                },
+                {
+                  "name": "Formosa",
+                  "value": "Formosa"
+                },
+                {
+                  "name": "Jujuy",
+                  "value": "Jujuy"
+                },
+                {
+                  "name": "La Pampa",
+                  "value": "La Pampa"
+                },
+                {
+                  "name": "La Rioja",
+                  "value": "La Rioja"
+                },
+                {
+                  "name": "Mendoza",
+                  "value": "Mendoza"
+                },
+                {
+                  "name": "Misiones",
+                  "value": "Misiones"
+                },
+                {
+                  "name": "Neuquén",
+                  "value": "Neuquén"
+                },
+                {
+                  "name": "Río Negro",
+                  "value": "Río Negro"
+                },
+                {
+                  "name": "Salta",
+                  "value": "Salta"
+                },
+                {
+                  "name": "San Juan",
+                  "value": "San Juan"
+                },
+                {
+                  "name": "San Luis",
+                  "value": "San Luis"
+                },
+                {
+                  "name": "Santa Cruz",
+                  "value": "Santa Cruz"
+                },
+                {
+                  "name": "Santa Fe",
+                  "value": "Santa Fe"
+                },
+                {
+                  "name": "Santiago del Estero",
+                  "value": "Santiago del Estero"
+                },
+                {
+                  "name": "Tierra del Fuego",
+                  "value": "Tierra del Fuego"
+                },
+                {
+                  "name": "Tucumán",
+                  "value": "Tucumán"
+                },
+                {
+                  "name": "No especifica",
+                  "value": "No especifica"
+                },
+                {
+                  "name": "CABA",
+                  "value": "CABA"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha límite de presentación",
+              "displayName": "Fecha límite de presentación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Requisitos técnicos",
+              "displayName": "Requisitos técnicos",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Certificaciones o garantías exigidas",
+              "displayName": "Certificaciones o garantías exigidas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel de compatibilidad",
+              "displayName": "Nivel de compatibilidad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Alta",
+                  "value": "Alta"
+                },
+                {
+                  "name": "Media",
+                  "value": "Media"
+                },
+                {
+                  "name": "Baja",
+                  "value": "Baja"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen IA",
+              "displayName": "Resumen IA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Nueva",
+                  "value": "Nueva"
+                },
+                {
+                  "name": "Procesada por IA",
+                  "value": "Procesada por IA"
+                },
+                {
+                  "name": "Descartada automática",
+                  "value": "Descartada automática"
+                },
+                {
+                  "name": "En revisión humana",
+                  "value": "En revisión humana"
+                },
+                {
+                  "name": "Aprobada",
+                  "value": "Aprobada"
+                },
+                {
+                  "name": "Rechazada",
+                  "value": "Rechazada"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Abierta",
+                  "value": "Abierta"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha de detección",
+              "displayName": "Fecha de detección",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Aprobado por humano",
+              "displayName": "Aprobado por humano",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas de revisión humana",
+              "displayName": "Notas de revisión humana",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacto del organismo",
+              "displayName": "Contacto del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Sitio web del organismo",
+              "displayName": "Sitio web del organismo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores_Log",
+              "displayName": "Errores_Log",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Errores relacionados",
+              "displayName": "Errores relacionados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Última modificación",
+              "displayName": "Última modificación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        624
+      ],
+      "id": "c60486f0-99e1-4cb3-ba1c-0ef2cb448c9d",
+      "name": "Actualizar - Estado Aprobada",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "353b6wqpQ8yME0pW",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "df2d441b-df4f-48d6-bf02-91d317b4fa1b",
+              "leftValue": "={{ $json.fields.Estado }}",
+              "rightValue": "Nueva",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -464,
+        240
+      ],
+      "id": "d01d6755-192e-4c32-a9f3-ac1752fe336b",
+      "name": "Filter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IA - Extraer datos de la licitación",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparador RSS - Alertas Google": {
+      "main": [
+        [
+          {
+            "node": "Filtro - Palabra clave licitación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro - Palabra clave licitación": {
+      "main": [
+        [
+          {
+            "node": "Crear fila - Nueva licitación (RSS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear fila - Nueva licitación (RSS)": {
+      "main": [
+        []
+      ]
+    },
+    "Disparador - Nueva licitación detectada": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar aviso (link original)": {
+      "main": [
+        [
+          {
+            "node": "Extraer texto del aviso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar - Error link roto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer texto del aviso": {
+      "main": [
+        [
+          {
+            "node": "Buscar datos empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar datos empresa": {
+      "main": [
+        [
+          {
+            "node": "IA - Extraer datos de la licitación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA - Extraer datos de la licitación": {
+      "main": [
+        [
+          {
+            "node": "Parsear JSON de la IA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar - Error IA (falla API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear JSON de la IA": {
+      "main": [
+        [
+          {
+            "node": "IF - ¿JSON válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - ¿JSON válido?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar - Error JSON inválido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar - Datos extraídos (Procesada por IA)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar - Datos extraídos (Procesada por IA)": {
+      "main": [
+        [
+          {
+            "node": "IF - ¿Prioridad Alta/Media?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - ¿Prioridad Alta/Media?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar - Descartada automática (Baja)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack - Aviso equipo comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparador - Aprobación humana": {
+      "main": [
+        [
+          {
+            "node": "IF - ¿Aprobado por humano?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - ¿Aprobado por humano?": {
+      "main": [
+        [
+          {
+            "node": "Buscar datos (aprobación)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar datos (aprobación)": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Enviar resumen comercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail - Enviar resumen comercial": {
+      "main": [
+        [
+          {
+            "node": "Actualizar - Estado Aprobada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Descargar aviso (link original)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fb92b856-758d-4a4b-8e86-ae3c9ebf97e6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a050b4f010b633a45fc9395868b2abe8b90fc029a9a089f2e91eea036a264d23"
+  },
+  "nodeGroups": [],
+  "id": "4vQx6MLpMAgWo6ip",
+  "tags": []
+}
